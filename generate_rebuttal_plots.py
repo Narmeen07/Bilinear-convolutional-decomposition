@@ -125,6 +125,10 @@ for row, env in enumerate(ENVS):
                 # Unexplained variance = 1 - explained_variance
                 raw = df['explained_variance'].dropna()
                 vals = 1.0 - raw
+                # Drop outliers (likely system glitches) outside 1st-99th percentile
+                lo, hi = vals.quantile(0.01), vals.quantile(0.99)
+                mask = vals.between(lo, hi)
+                vals = vals[mask]
             else:
                 vals = df[metric].dropna()
 
